@@ -1,0 +1,106 @@
+# File Written By: @relaylogix
+# File SD: 30-03-2020
+# Function Returns Permlink Comments And Picks One Randomly
+
+get_comment_author(){
+
+printf "\nEnter User Name [smoke.io user name of original post]: "
+read USERNAME
+printf "Enter Permlink [smoke.io destination link to post]: "
+read POST
+printf "\n"
+ret_data=`curl -s --data '{ "jsonrpc": "2.0", "method": "get_content_replies", "params": ["'${USERNAME}'", "'${POST}'"], "id": 1 }' https://pubrpc.smoke.io```
+
+curWord1=""
+curWord2=""
+curWord3=""
+curWord4=""
+strLength=0
+iCount=0
+
+POS_author_index=0
+POS_perm_index=0
+POS_body_index=0
+POS_json_index=0
+
+POS_author[0]=0
+POS_permalink[0]=0
+POS_body[0]=0
+POS_json[0]=0
+
+PERC_CMP=""
+
+# Set Length Of Data To Parse
+strLength=$((${#ret_data}-0))
+printf "Reading Data For\n"
+printf "All Comment Authors For ${USERNAME}'s Post:\nhttp://smoke.io/@${USERNAME}/${POST}\nPlease Wait..\n"
+until [ "${iCount}" = "${strLength}" ]; do
+
+        # Test For Extraction Start Locations
+
+        # Author Test
+        curWord1=${ret_data:${iCount}:10}
+        if [ "${curWord1}" = '"''author''"'':''"' ]; then
+                # Start Position Of Owner Data
+                POS_author[${POS_author_index}]=$((${iCount}+10))
+                POS_author_index=$((${POS_author_index}+1))
+        fi
+        # Permlink Test
+        curWord2=${ret_data:${iCount}:17}
+        if [ "${curWord2}" = '","''permlink''"'':''"re-' ]; then
+                # Start Position Of Owner Data
+                POS_permalink[${POS_perm_index}]=$((${iCount}+0))
+                POS_perm_index=$((${POS_perm_index}+1))
+        fi
+        # Body Test
+        curWord3=${ret_data:${iCount}:10}
+        if [ "${curWord3}" = '","''body''"'':''"' ]; then
+                # Start Position Of Comment Data
+                POS_body[${POS_body_index}]=$((${iCount}+10))
+                POS_body_index=$((${POS_body_index}+1))
+        fi
+        # JSON Test
+        curWord4=${ret_data:${iCount}:12}
+        if [ "${curWord4}" = '","''json_meta' ]; then
+                # Start Position Of JSON Data
+                POS_json[${POS_json_index}]=$((${iCount}+0))
+                POS_json_index=$((${POS_json_index}+1))
+        fi
+
+        iCount=$(($iCount+1))
+        printf "\f"
+        printf "Reading Data For\n"
+        printf "All Comment Authors For ${USERNAME}'s Post:\nhttp://smoke.io/@${USERNAME}/${POST}\nPlease Wait..${curWord1}--${curWord2}\n"
+done
+
+printf "\fAll Comment Authors For ${USERNAME}'s Post:\nhttp://smoke.io/@${USERNAME}/${POST}\n\n"
+USER_BOUND=$((${POS_author_index}-0))
+iCount=0
+
+until [ "${iCount}" = "${USER_BOUND}" ]; do
+
+        USERLEN[${iCount}]=0
+        USER[${iCount}]=""
+        COMMENTLEN[${iCount}]=0
+        COMMENT[${iCount}]=""
+
+        USERLEN[${iCount}]=$((${POS_permalink[${iCount}]}-${POS_author[${iCount}]}))
+        USER[${iCount}]=${ret_data:${POS_author[${iCount}]}:${USERLEN[${iCount}]}}
+
+        COMMENTLEN[${iCount}]=$((${POS_json[${iCount}]}-${POS_body[${iCount}]}))
+        COMMENT[${iCount}]=${ret_data:${POS_body[${iCount}]}:${COMMENTLEN[${iCount}]}}
+
+        printf "${green}${USER[${iCount}]}\n${yel}${COMMENT[${iCount}]}${white}\n"
+        iCount=$((${iCount}+1))
+
+done
+printf "\n"
+
+LUCK=$(shuf -i 0-${USER_BOUND} -n 1)
+if [ "${POS_author[0]}" != 0 ]; then
+        printf "The Lucky Comment Author For This Post Is: ${cyan}${USER[${LUCK}]}${white}\n\n\n"
+else
+        printf "No Comments Found\n\n\n"
+fi
+
+}
