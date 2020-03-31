@@ -35,7 +35,7 @@
                 # Display User With List Of Commands To Use
 
                 printf "${green}-----==================================================-----\n"
-                printf "${green}-----=====[ SMOKE.IO  Interface Control Commands ]=====-----\n"
+                printf "${green}-----=====[    kief-tools v0.0.1 for SMOKE.io    ]=====-----\n"
                 printf "${green}-----==================================================-----\n\n"
                 printf "${white}0      Clear Output Window\n1      Setup Config\n1a     Current Config\n2      Add Active User\n"
                 printf "2a     Display Active User List\n2b     Generate Random Account From Actives List\n3      Smoke Accounts Count\n4      Registered Witness Count\n4a     List Top Active Witnesses\n"
