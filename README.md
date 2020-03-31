@@ -11,3 +11,5 @@
 #### You can find me on the [Smoke Discord Channel](https://discord.gg/GNrrFu) user @relaylogix
 
 #### You can see my profile @ [Relay On Smoke](http://smoke.io/@relaylogix)
+
+#### I also created a discord for kief-tools @ [kief-tools-discord](https://discord.gg/uTsVc7)
