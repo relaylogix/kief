@@ -1,4 +1,4 @@
-# ***kief tools***
+# ***kief tools***&nbsp;&nbsp;&nbsp;<sub>[**[wiki click here]**](https://github.com/relaylogix/kief/wiki/Initial-Wiki-File)</sub>
 <sup>**©2020-relaylogix**</sup>
 ## **RPC-Witness Interface Tool For [The Smoke Network](http://Smoke.io)**
 
