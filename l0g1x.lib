@@ -1,0 +1,95 @@
+printf "\n\nLogix Library Loading...\n"
+# Logix Bash Scripting Library File
+# File Written By: @relaylogix
+# SD:04.MAR.2020
+
+# Constants
+
+# (COLOR)
+red='\e[91m'
+green='\e[92m'
+blue='\e[94m'
+white='\e[0m'
+out_clr='\e[25m'
+yel='\e[93m'
+cya='\e[96m'
+
+
+# Functions
+
+ret_3_letters()
+{
+        ret_let=''
+        ret_letter=''
+
+        ret_let=$(shuf -n 1 -e a b c d e f g h i j k l m n o p q r s t u v w x y z)
+        ret_letter="$ret_let"
+        for icount in 1 2
+        do
+                ret_let=$(shuf -n 1 -e a b c d e f g h i j k l m n o p q r s t u v w x y z 0 1 2 3 4 5 6 7 8 9 -)
+                ret_letter="$ret_letter""$ret_let"
+        done
+        kick_back="$ret_letter"
+}
+
+random_account()
+{
+        ret_3_letters
+        name_string=``` curl -s --data '{"jsonrpc": "2.0", "method": "lookup_accounts", "params": [ "'${kick_back}'", "1" ], "id":4}' https://rpc.smoke.io ```
+        clean_string 19 3 $name_string
+        LUCKY_ACCOUNT="$CLEANED_STRING"
+}
+
+clean_string()
+{
+
+# input parameters
+# specify the number of characters in the begining of the string to drop [front]
+# specify the number of characters on the end of the string to drop [end]
+# specify a string to clean [str_to_clean]
+
+        front=$1 # User specified ammount of characters to drop off the front
+        end=$2 # User specified ammount of characters to drop off the end
+        str_to_clean=$3 # User specified string to clean
+
+# numeric values for extraction
+
+        str_drop_off_len=$(($front+$end)) # Overall cut length
+        pull_length=$((${#str_to_clean}-$str_drop_off_len)) # Overall length
+
+# drop off front of passed in string
+        temp_str=${str_to_clean:$front}
+
+# drop off the remainder of the end of the string
+        CLEANED_STRING=${temp_str:0:$pull_length}
+}
+
+get_weekly_actives()
+{
+
+# will return the random accounts from the active accounts file
+        active_list=$1 # User specified active accounts list file
+        name=""
+        iCount=0
+        while read -r active_name; do
+                name="$name"" ""$active_name"" "
+                iCount=${iCount}+1
+        done < "$active_list"
+        WEEKLY_ACTIVE=$(shuf -n 1 -e $name)
+        WEEKLY_ACTIVE_COUNT=${iCount}
+
+}
+
+user_on_list()
+{
+        NAMEFOUND=0
+        active_list=$1 # User specified active accounts list file
+        name_to_add=$2 # User specified account to add
+        while read -r active_name; do
+                if [ "$active_name" = "$name_to_add" ]; then
+                        NAMEFOUND=1
+                fi
+        done < "$active_list"
+}
+
+printf "Logix Library Loaded...\n"
