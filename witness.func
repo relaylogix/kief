@@ -1,0 +1,55 @@
+# File Written By: @relaylogix
+# File SD: 23-03-2020
+# Plugin File For Smoke RPC Interface
+
+# Function Library For Witness Data Functions
+
+# Get Witness Details
+
+witness_missed_blocks(){
+
+        printf "\nEnter Witness Name: "
+        read wit_name
+        printf "\n"
+        ret_data=`curl -s --data '{ "jsonrpc": "2.0", "method": "get_witness_by_account", "params": ["'${wit_name}'"], "id": 1 }' https://pubrpc.smoke.io`
+        clean_string 17 1 ${ret_data}
+        if [ "${CLEANED_STRING}" = "null" ]; then
+                printf "${wit_name} is ${red}not${white} currently registered as a witness on the Smoke Block Chain.\n\n"
+                return
+        fi
+        curWord=""
+        strLength=0
+        iCount=0
+        POS_missed=0
+        POS_last=0
+        # Set Length Of Data To Parse
+        strLength=$((${#ret_data}-0))
+
+        until [ "${iCount}" = "${strLength}" ]; do
+
+                # Test For Extraction Start Locations
+
+                # Total Missed Test
+                curWord=${ret_data:${iCount}:9}
+                if [ "${curWord}" = '_missed''"'':' ]; then
+                        # Start Position Of Missed Block Data
+                        POS_missed=$((${iCount}+9))
+                fi
+                # LAst ASlot Test
+                curWord=${ret_data:${iCount}:11}
+                if [ "${curWord}" = ',''"''last_aslo' ]; then
+                        # Start Position Of Last ASlt Data
+                        POS_last=$((${iCount}+0))
+                fi
+
+                iCount=$(($iCount+1))
+        done
+
+        PULLLEN=0
+        MISSED=""
+        PULLLEN=$((${POS_last}-${POS_missed}))
+        MISSED=${ret_data:${POS_missed}:${PULLLEN}}
+
+        printf "${green}${wit_name}${white} has missed:${red} ${MISSED}${white} blocks.\n\n"
+
+}
