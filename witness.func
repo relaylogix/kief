@@ -11,7 +11,7 @@ witness_missed_blocks(){
         printf "\nEnter Witness Name: "
         read wit_name
         printf "\n"
-        ret_data=`curl -s --data '{ "jsonrpc": "2.0", "method": "get_witness_by_account", "params": ["'${wit_name}'"], "id": 1 }' https://pubrpc.smoke.io`
+        ret_data=`curl -s --data '{ "jsonrpc": "2.0", "method": "get_witness_by_account", "params": ["'${wit_name}'"], "id": 1 }' ${RPCSERVER}`
         clean_string 17 1 ${ret_data}
         if [ "${CLEANED_STRING}" = "null" ]; then
                 printf "${wit_name} is ${red}not${white} currently registered as a witness on the Smoke Block Chain.\n\n"
