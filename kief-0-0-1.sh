@@ -26,8 +26,11 @@
 
         # Interface Title Banner
 
-        printf "${green}Smoke.io RPC Interface Loaded...\nCreated By:${red} @relaylogix\n${green}http://smoke.io/@relaylogix\n\n${blue}For help please reachout to me on the Smoke Network Discord channel.\n\n${white}"
+        printf "${green}kief-tools Smoke.io RPC Interface Loaded...\nCreated By:${red} @relaylogix\n${green}http://smoke.io/@relaylogix\n\n${blue}"
+        printf "For help please reachout to me on the Smoke Network Discord channel.\nOr visit the kief-tools discord channel @ https://discord.gg/JQtFQ8\n${white}"
 
+        # Check config active user file exists-if not clear config variable
+        [ -f "${active_accounts_path}" ] || active_accounts_path=""
         # Main Structure Of Script Start
 
         while :
@@ -72,35 +75,53 @@
                                 printf "${green}The Current Active Accounts File Is Located At: ${active_accounts_path}\n${white}"
                                 ;;
                         2)
-                                # Add A User To The Active Users File
-                                printf "${red}Specify User Account To Add To The Active Accounts File:  ${white}"
-                                read active_user
-                                user_on_list "${active_accounts_path}" $active_user
-                                if [ $NAMEFOUND = 0 ]; then
-                                        echo $active_user >> "${active_accounts_path}"
-                                        printf "${red}"$active_user" has been added to the active users list.\n\n${white}"
-                                else
-                                        printf "${red}The account${green} "$active_user"${red} is already on the list. ${green}Add again? (y|n)\n"
-                                        read user_ack
-                                        if [ $user_ack = "y" ]; then
+                                if [ -f "${active_accounts_path}" ]; then
+
+                                        # Add A User To The Active Users File
+                                        printf "${red}Specify User Account To Add To The Active Accounts File:  ${white}"
+                                        read active_user
+                                        user_on_list "${active_accounts_path}" $active_user
+                                        if [ $NAMEFOUND = 0 ]; then
                                                 echo $active_user >> "${active_accounts_path}"
-                                                printf "${red}"$active_user" has been added to the active users list.\n\n${white}"
+                                            printf "${red}"$active_user" has been added to the active users list.\n\n${white}"
+                                        else
+                                                printf "${red}The account${green} "$active_user"${red} is already on the list. ${green}Add again? (y|n)\n"
+                                                read user_ack
+                                                if [ $user_ack = "y" ]; then
+                                                        echo $active_user >> "${active_accounts_path}"
+                                                        printf "${red}"$active_user" has been added to the active users list.\n\n${white}"
+                                               fi
                                         fi
+                                else
+                                        printf "${yel}No active users path has been set. Use option 1 to set an active users file to use.${white}\n\n"
+                                        sleep 2
                                 fi
                                 ;;
                         2a)
-                                ret_data=$(cat "$active_accounts_path")
-                                actives_count=$(wc -l "$active_accounts_path")
-                                active_accounts_len=${#active_accounts_path}
-                                clean_string 0 "${active_accounts_len}" "${actives_count}"
-                                sleep 0.25
-                                clean_string 0 1 "$CLEANED_STRING"
-                                printf "${green}There Are Currently${red} ${CLEANED_STRING} ${green}Accounts On The Active List\n"
-                                printf "${red}${ret_data}${white}\n\n"
+                                if [ -f "${active_accounts_path}" ]; then
+
+                                        ret_data=$(cat "$active_accounts_path")
+                                        actives_count=$(wc -l "$active_accounts_path")
+                                        active_accounts_len=${#active_accounts_path}
+                                        clean_string 0 "${active_accounts_len}" "${actives_count}"
+                                        sleep 0.25
+                                        clean_string 0 1 "$CLEANED_STRING"
+                                        printf "${green}There Are Currently${red} ${CLEANED_STRING} ${green}Accounts On The Active List\n"
+                                        printf "${red}${ret_data}${white}\n\n"
+                                else
+                                        printf "${yel}No active users path has been set. Use option 1 to set an active users file to use.${white}\n\n"
+                                        sleep 2
+                                fi
                                 ;;
                         2b)
-                                get_weekly_actives "${active_accounts_path}"
-                                printf "\n${red}This weeks active account winner is:${yel} $WEEKLY_ACTIVE${white}\n\n"
+                                if [ -f "${active_accounts_path}" ]; then
+
+                                        get_weekly_actives "${active_accounts_path}"
+                                        printf "\n${red}This weeks active account winner is:${yel} $WEEKLY_ACTIVE${white}\n\n"
+                                else
+                                        printf "${yel}No active users path has been set. Use option 1 to set an active users file to use.${white}\n\n"
+                                        sleep 2
+                                fi
                                 ;;
                         3)
                                 printf "\n\n${green}The current account count on the Smoke Network is...\n"
