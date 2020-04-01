@@ -22,7 +22,20 @@
 
         read -r active_accounts_path < l0g1x.config
 
-        # Script Entrance Point
+#
+#-----------------------------------------------------------
+#               Start Of Config File Read In
+#-----------------------------------------------------------
+#
+        while read -r setting ; do
+                if [[ "$setting" = "rpc_server"* ]]; then
+                        clean_string 11 0 "$setting"
+                        RPCSERVER=${CLEANED_STRING}
+                        printf "rpc_server set to ${RPCSERVER}\n"
+                fi
+        done < "l0g1x.config"
+
+       # Script Entrance Point
 
         # Interface Title Banner
 
@@ -90,7 +103,7 @@
                                                 if [ $user_ack = "y" ]; then
                                                         echo $active_user >> "${active_accounts_path}"
                                                         printf "${red}"$active_user" has been added to the active users list.\n\n${white}"
-                                               fi
+                                                fi
                                         fi
                                 else
                                         printf "${yel}No active users path has been set. Use option 1 to set an active users file to use.${white}\n\n"
@@ -127,31 +140,27 @@
                                 printf "\n\n${green}The current account count on the Smoke Network is...\n"
 
 
-                                ret_data=``` curl -s --data '{"jsonrpc": "2.0", "method": "get_account_count", "params": [[ ]], "id": 0 }' https://rpc.smoke.io ```
+                                ret_data=``` curl -s --data '{"jsonrpc": "2.0", "method": "get_account_count", "params": [[ ]], "id": 0 }' ${RPCSERVER} ```
                                 clean_string 17 1 $ret_data
                                 printf "There are currently  ---  ${red}${CLEANED_STRING}${green}  ---  accounts registered on the ${white}SMOKE ${green}blockchain..\n\n${white}"
                                 ;;
                         4)
                                 printf "\n\n${green}The current number of registered Smoke Network witnesses is...\n${white}"
-                                ret_data=``` curl -s --data '{"jsonrpc": "2.0", "method": "get_witness_count", "params": [[ ]], "id": 1 }' https://rpc.smoke.io ```
+                                ret_data=``` curl -s --data '{"jsonrpc": "2.0", "method": "get_witness_count", "params": [[ ]], "id": 1 }' ${RPCSERVER} ```
                                 clean_string 17 1 $ret_data
                                 printf "${green}There are currently  ---  ${red}${CLEANED_STRING}${green}  ---  witness accounts registered on the ${white}SMOKE ${green}blockchain..\n\n${white}"
                                 ;;
                         4a)
                                 printf "\n\n${green}The current active Smoke Network witnesses are...\n${white}"
-                                ret_data=``` curl -s --data '{"jsonrpc": "2.0", "method": "get_active_witnesses", "params": [[ ]], "id": 2 }' https://rpc.smoke.io ```
+                                ret_data=``` curl -s --data '{"jsonrpc": "2.0", "method": "get_active_witnesses", "params": [[ ]], "id": 2 }' ${RPCSERVER} ```
                                 clean_string 18 2 $ret_data
                                 printf "${green}The current top witnesses are  ---  ${red}${CLEANED_STRING}\n\n${white}"
-                                for name in ${CLEANED_STRING}
-                                do
-                                        echo $name"\n"
-                                done
                                 ;;
                         4b)
                                 witness_missed_blocks
                                 ;;
                         5)
-                                ret_data=``` curl -s --data '{"jsonrpc": "2.0", "method": "get_hardfork_version", "params": [[ ]], "id": 3 }' https://rpc.smoke.io ```
+                                ret_data=``` curl -s --data '{"jsonrpc": "2.0", "method": "get_hardfork_version", "params": [[ ]], "id": 3 }' ${RPCSERVER} ```
                                 clean_string 18 2 $ret_data
                                 printf "${green}The Current Smoke Network Hard Fork Version Is  ---  ${green}${CLEANED_STRING}\n\n${white}"
                                 ;;

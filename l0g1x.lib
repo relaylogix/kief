@@ -35,7 +35,7 @@ ret_3_letters()
 random_account()
 {
         ret_3_letters
-        name_string=``` curl -s --data '{"jsonrpc": "2.0", "method": "lookup_accounts", "params": [ "'${kick_back}'", "1" ], "id":4}' https://rpc.smoke.io ```
+        name_string=``` curl -s --data '{"jsonrpc": "2.0", "method": "lookup_accounts", "params": [ "'${kick_back}'", "1" ], "id":4}' ${RPCSERVER} ```
         clean_string 19 3 $name_string
         LUCKY_ACCOUNT="$CLEANED_STRING"
 }
@@ -63,7 +63,6 @@ clean_string()
 # drop off the remainder of the end of the string
         CLEANED_STRING=${temp_str:0:$pull_length}
 }
-
 get_weekly_actives()
 {
 
@@ -93,3 +92,4 @@ user_on_list()
 }
 
 printf "Logix Library Loaded...\n"
+
