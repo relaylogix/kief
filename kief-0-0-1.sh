@@ -19,9 +19,7 @@
         # Local Declarations
 
         touch l0g1x.config
-
-        read -r active_accounts_path < l0g1x.config
-
+        touch active.accounts
 #
 #-----------------------------------------------------------
 #               Start Of Config File Read In
@@ -33,17 +31,19 @@
                         RPCSERVER=${CLEANED_STRING}
                         printf "rpc_server set to ${RPCSERVER}\n"
                 fi
+                if [[ "$setting" = "active_account"* ]]; then
+                        clean_string 15 0 "$setting"
+                        ACTIVES=${CLEANED_STRING}
+                        printf "active_accounts set to ${ACTIVES}\n"
+                fi
         done < "l0g1x.config"
-
-       # Script Entrance Point
-
         # Interface Title Banner
 
         printf "${green}kief-tools Smoke.io RPC Interface Loaded...\nCreated By:${red} @relaylogix\n${green}http://smoke.io/@relaylogix\n\n${blue}"
         printf "For help please reachout to me on the Smoke Network Discord channel.\nOr visit the kief-tools discord channel @ https://discord.gg/JQtFQ8\n${white}"
 
         # Check config active user file exists-if not clear config variable
-        [ -f "${active_accounts_path}" ] || active_accounts_path=""
+        [ -f "${ACTIVES}" ] && active_accounts_path=${ACTIVES} || active_accounts_path=""
         # Main Structure Of Script Start
 
         while :
@@ -74,12 +74,11 @@
                                 case "$user_ack" in
                                         y)
                                                 touch ${active_accounts_path}
-                                                echo ${active_accounts_path} > l0g1x.config
                                                 printf "${green}Config Updated!\n\n${white}"
                                                 ;;
                                         *)
                                                 printf "${red} User Aborted Config Update. Try Again.\n${white}"
-                                                read -r active_accounts_path < l0g1x.config
+                                                active_accounts_path="active.accounts"
                                                 ;;
                                 esac
                                 ;;
@@ -103,7 +102,7 @@
                                                 if [ $user_ack = "y" ]; then
                                                         echo $active_user >> "${active_accounts_path}"
                                                         printf "${red}"$active_user" has been added to the active users list.\n\n${white}"
-                                                fi
+                                               fi
                                         fi
                                 else
                                         printf "${yel}No active users path has been set. Use option 1 to set an active users file to use.${white}\n\n"
