@@ -18,25 +18,8 @@
 
         # Local Declarations
 
-        touch l0g1x.config
-        touch active.accounts
-#
-#-----------------------------------------------------------
-#               Start Of Config File Read In
-#-----------------------------------------------------------
-#
-        while read -r setting ; do
-                if [[ "$setting" = "rpc_server"* ]]; then
-                        clean_string 11 0 "$setting"
-                        RPCSERVER=${CLEANED_STRING}
-                        printf "rpc_server set to ${RPCSERVER}\n"
-                fi
-                if [[ "$setting" = "active_account"* ]]; then
-                        clean_string 15 0 "$setting"
-                        ACTIVES=${CLEANED_STRING}
-                        printf "active_accounts set to ${ACTIVES}\n"
-                fi
-        done < "l0g1x.config"
+read_config
+
         # Interface Title Banner
 
         printf "${green}kief-tools Smoke.io RPC Interface Loaded...\nCreated By:${red} @relaylogix\n${green}http://smoke.io/@relaylogix\n\n${blue}"
@@ -75,6 +58,8 @@
                                         y)
                                                 touch ${active_accounts_path}
                                                 printf "${green}Config Updated!\n\n${white}"
+                                                ACTIVES=${active_accounts_path}
+                                                write_config
                                                 ;;
                                         *)
                                                 printf "${red} User Aborted Config Update. Try Again.\n${white}"
